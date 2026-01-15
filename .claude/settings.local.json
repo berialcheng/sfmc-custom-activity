@@ -3,7 +3,10 @@
     "allow": [
       "Bash(npm install)",
       "Bash(npm install:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix: Use stable Next.js 14 for Vercel deployment\n\n- Downgrade Next.js to 14.2.21 \\(stable\\)\n- Add Node.js engine requirement\n- Regenerate package-lock.json\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)"
     ]
   }
 }
