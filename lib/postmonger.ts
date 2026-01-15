@@ -101,14 +101,19 @@ export class JourneyBuilderConnection {
       const interactionData = data as Record<string, unknown>;
       this.interaction = interactionData as unknown as JourneyInteraction;
 
-      // Try to extract activity from interaction
-      if (interactionData.activities && Array.isArray(interactionData.activities)) {
-        // Find our activity in the activities array
+      // NOTE: Do NOT overwrite this.activity from requestedInteraction!
+      // The initActivity event already gave us the correct activity data.
+      // requestedInteraction contains ALL activities in the journey,
+      // and picking the wrong one causes data corruption.
+
+      // If we need to find our activity, we should match by key/id:
+      if (!this.activity && interactionData.activities && Array.isArray(interactionData.activities)) {
         const activities = interactionData.activities as ActivityInstance[];
-        if (activities.length > 0) {
-          // Usually the current activity is the one being configured
-          this.activity = activities[0];
-          console.log('Activity from requestedInteraction:', this.activity);
+        // Only use this as fallback if initActivity didn't set the activity
+        const restActivity = activities.find(a => a.type === 'REST');
+        if (restActivity) {
+          this.activity = restActivity;
+          console.log('Activity from requestedInteraction (fallback):', this.activity);
         }
       }
 
@@ -195,6 +200,12 @@ export class JourneyBuilderConnection {
       ...this.activity.metaData,
       isConfigured: true,
     };
+
+    // IMPORTANT: Remove any corrupted outcomes to prevent accumulation
+    // REST activities should not define custom outcomes - SFMC will use default behavior
+    delete (this.activity as Record<string, unknown>).outcomes;
+    delete (this.activity as Record<string, unknown>).configurationArguments;
+    delete (this.activity as Record<string, unknown>).schema;
 
     console.log('Saving activity:', JSON.stringify(this.activity, null, 2));
 
