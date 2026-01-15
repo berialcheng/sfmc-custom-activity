@@ -32,7 +32,10 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
   // Initialize Postmonger connection
   useEffect(() => {
     // Check if running in Journey Builder
-    if (!isInJourneyBuilder()) {
+    const inJB = isInJourneyBuilder();
+    console.log('Is in Journey Builder:', inJB);
+
+    if (!inJB) {
       console.log('Development mode: Not in Journey Builder iframe');
       setIsDevMode(true);
       setIsReady(true);
@@ -42,12 +45,13 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
     const connection = getConnection();
 
     connection.initialize({
-      onReady: () => {
-        console.log('Connection ready');
+      onInitActivity: () => {
+        console.log('Activity initialized, showing config UI');
         setIsReady(true);
 
         // Restore saved configuration
         const savedPayload = connection.getPayload();
+        console.log('Saved payload:', savedPayload);
         if (Object.keys(savedPayload).length > 0) {
           setConfig((prev) => ({ ...prev, ...savedPayload }));
         }
@@ -57,8 +61,10 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
       },
 
       onClickedNext: () => {
-        // Save configuration
-        handleSave();
+        // Save configuration when user clicks Done/Next
+        const conn = getConnection();
+        conn.save();
+        console.log('Configuration saved');
       },
     });
   }, []);
@@ -95,7 +101,7 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
 
   if (!isReady) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Connecting to Journey Builder...</p>
