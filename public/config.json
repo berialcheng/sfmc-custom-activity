@@ -117,23 +117,5 @@
         ]
       }
     }
-  },
-  "outcomes": [
-    {
-      "arguments": {
-        "branchResult": "success"
-      },
-      "metaData": {
-        "label": "Success"
-      }
-    },
-    {
-      "arguments": {
-        "branchResult": "failure"
-      },
-      "metaData": {
-        "label": "Failure"
-      }
-    }
-  ]
+  }
 }
