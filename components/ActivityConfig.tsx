@@ -119,7 +119,7 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
           </p>
         </div>
       )}
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Configure Custom Activity</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Configure Foundation's Support Activity</h1>
 
       <div className="space-y-6">
         {/* Custom Field 1 */}

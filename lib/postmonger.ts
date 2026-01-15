@@ -61,9 +61,9 @@ export class JourneyBuilderConnection {
         // Create a default activity structure
         console.log('Creating default activity structure');
         this.activity = {
-          id: (initData.id as string) || 'custom-activity',
-          key: (initData.key as string) || 'custom-activity-key',
-          name: (initData.name as string) || 'Custom Activity',
+          id: (initData.id as string) || 'foundations-support-activity',
+          key: (initData.key as string) || 'foundations-support-activity-key',
+          name: (initData.name as string) || "Foundation's Support Activity",
           type: 'REST',
           arguments: {
             execute: {
@@ -159,9 +159,9 @@ export class JourneyBuilderConnection {
     if (!this.activity) {
       console.log('Creating new activity for save');
       this.activity = {
-        id: 'custom-activity',
-        key: 'custom-activity-key',
-        name: 'Custom Activity',
+        id: 'foundations-support-activity',
+        key: 'foundations-support-activity-key',
+        name: "Foundation's Support Activity",
         type: 'REST',
         arguments: {
           execute: {
