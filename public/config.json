@@ -1,0 +1,139 @@
+{
+  "workflowApiVersion": "1.1",
+  "metaData": {
+    "icon": "images/icon.png",
+    "category": "custom"
+  },
+  "type": "REST",
+  "lang": {
+    "en-US": {
+      "name": "Custom Activity",
+      "description": "A custom activity for Journey Builder"
+    },
+    "zh-CN": {
+      "name": "自定义活动",
+      "description": "Journey Builder 的自定义活动"
+    }
+  },
+  "arguments": {
+    "execute": {
+      "inArguments": [
+        {
+          "contactKey": "{{Contact.Key}}"
+        },
+        {
+          "emailAddress": "{{InteractionDefaults.Email}}"
+        },
+        {
+          "customField1": ""
+        },
+        {
+          "customField2": ""
+        }
+      ],
+      "outArguments": [
+        {
+          "result": ""
+        }
+      ],
+      "timeout": 100000,
+      "retryCount": 3,
+      "retryDelay": 10000,
+      "concurrentRequests": 5,
+      "url": "{{ENDPOINT_BASE}}/api/activity/execute"
+    }
+  },
+  "configurationArguments": {
+    "save": {
+      "url": "{{ENDPOINT_BASE}}/api/activity/save",
+      "verb": "POST",
+      "useJwt": false
+    },
+    "publish": {
+      "url": "{{ENDPOINT_BASE}}/api/activity/publish",
+      "verb": "POST",
+      "useJwt": false
+    },
+    "validate": {
+      "url": "{{ENDPOINT_BASE}}/api/activity/validate",
+      "verb": "POST",
+      "useJwt": false
+    },
+    "stop": {
+      "url": "{{ENDPOINT_BASE}}/api/activity/stop",
+      "verb": "POST",
+      "useJwt": false
+    }
+  },
+  "userInterfaces": {
+    "configurationSupportsReadOnlyMode": true,
+    "configModal": {
+      "fullscreen": false,
+      "height": 600,
+      "width": 800
+    }
+  },
+  "schema": {
+    "arguments": {
+      "execute": {
+        "inArguments": [
+          {
+            "contactKey": {
+              "dataType": "Text",
+              "isNullable": false,
+              "direction": "in"
+            }
+          },
+          {
+            "emailAddress": {
+              "dataType": "EmailAddress",
+              "isNullable": true,
+              "direction": "in"
+            }
+          },
+          {
+            "customField1": {
+              "dataType": "Text",
+              "isNullable": true,
+              "direction": "in"
+            }
+          },
+          {
+            "customField2": {
+              "dataType": "Text",
+              "isNullable": true,
+              "direction": "in"
+            }
+          }
+        ],
+        "outArguments": [
+          {
+            "result": {
+              "dataType": "Text",
+              "direction": "out",
+              "access": "visible"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "outcomes": [
+    {
+      "arguments": {
+        "branchResult": "success"
+      },
+      "metaData": {
+        "label": "Success"
+      }
+    },
+    {
+      "arguments": {
+        "branchResult": "failure"
+      },
+      "metaData": {
+        "label": "Failure"
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Salesforce Lightning Design System 风格 */
+.slds-input {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors;
+}
+
+.slds-button {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+}
+
+.slds-button--brand {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.slds-button--neutral {
+  @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50;
+}
