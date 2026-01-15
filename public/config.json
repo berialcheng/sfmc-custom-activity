@@ -7,11 +7,11 @@
   "type": "REST",
   "lang": {
     "en-US": {
-      "name": "Custom Activity",
+      "name": "Foundation's Support Activity",
       "description": "A custom activity for Journey Builder"
     },
     "zh-CN": {
-      "name": "自定义活动",
+      "name": "Foundation's Support Activity",
       "description": "Journey Builder 的自定义活动"
     }
   },
