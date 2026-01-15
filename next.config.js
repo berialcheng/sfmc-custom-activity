@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 允许跨域访问（SFMC 需要）
+  // Handle /index.html requests (SFMC compatibility)
+  async rewrites() {
+    return [
+      {
+        source: '/index.html',
+        destination: '/',
+      },
+    ];
+  },
+
+  // Allow cross-origin access (required by SFMC)
   async headers() {
     return [
       {
