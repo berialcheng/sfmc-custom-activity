@@ -203,9 +203,10 @@ export class JourneyBuilderConnection {
 
     // IMPORTANT: Remove any corrupted outcomes to prevent accumulation
     // REST activities should not define custom outcomes - SFMC will use default behavior
-    delete (this.activity as Record<string, unknown>).outcomes;
-    delete (this.activity as Record<string, unknown>).configurationArguments;
-    delete (this.activity as Record<string, unknown>).schema;
+    const activityObj = this.activity as unknown as Record<string, unknown>;
+    delete activityObj.outcomes;
+    delete activityObj.configurationArguments;
+    delete activityObj.schema;
 
     console.log('Saving activity:', JSON.stringify(this.activity, null, 2));
 
