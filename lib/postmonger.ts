@@ -160,58 +160,38 @@ export class JourneyBuilderConnection {
    * Save Activity configuration
    */
   save() {
-    // If no activity exists, create one
-    if (!this.activity) {
-      console.log('Creating new activity for save');
-      this.activity = {
-        id: 'foundations-support-activity',
-        key: 'foundations-support-activity-key',
-        name: "Foundation's Support Activity",
-        type: 'REST',
-        arguments: {
-          execute: {
-            inArguments: [],
-            outArguments: [],
-          },
-        },
-        metaData: {
-          isConfigured: false,
-        },
-      };
-    }
+    // IMPORTANT: Create a clean activity object with ONLY the fields we need
+    // Do NOT copy from this.activity as it may contain corrupted data from SFMC
 
-    // Build inArguments
     const inArguments = [
       { contactKey: '{{Contact.Key}}' },
       { emailAddress: '{{InteractionDefaults.Email}}' },
       ...Object.entries(this.payload).map(([key, value]) => ({ [key]: value })),
     ];
 
-    // Update activity configuration
-    this.activity.arguments = {
-      execute: {
-        inArguments,
-        outArguments: [{ result: '' }],
+    // Build a clean activity object - only include essential fields
+    const cleanActivity = {
+      // Preserve identity fields from existing activity if available
+      id: this.activity?.id || 'foundations-support-activity',
+      key: this.activity?.key || 'foundations-support-activity-key',
+      name: this.activity?.name || "Foundation's Support Activity",
+      type: 'REST',
+      arguments: {
+        execute: {
+          inArguments,
+          outArguments: [{ result: '' }],
+        },
       },
+      metaData: {
+        isConfigured: true,
+      },
+      // Do NOT include: outcomes, configurationArguments, schema, editable, etc.
     };
 
-    // Mark as configured
-    this.activity.metaData = {
-      ...this.activity.metaData,
-      isConfigured: true,
-    };
+    console.log('Saving clean activity:', JSON.stringify(cleanActivity, null, 2));
 
-    // IMPORTANT: Remove any corrupted outcomes to prevent accumulation
-    // REST activities should not define custom outcomes - SFMC will use default behavior
-    const activityObj = this.activity as unknown as Record<string, unknown>;
-    delete activityObj.outcomes;
-    delete activityObj.configurationArguments;
-    delete activityObj.schema;
-
-    console.log('Saving activity:', JSON.stringify(this.activity, null, 2));
-
-    // Send updated activity to Journey Builder
-    this.connection.trigger('updateActivity', this.activity);
+    // Send clean activity to Journey Builder
+    this.connection.trigger('updateActivity', cleanActivity);
   }
 
   /**
