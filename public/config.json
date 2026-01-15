@@ -40,27 +40,27 @@
       "retryCount": 3,
       "retryDelay": 10000,
       "concurrentRequests": 5,
-      "url": "{{ENDPOINT_BASE}}/api/activity/execute"
+      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/execute"
     }
   },
   "configurationArguments": {
     "save": {
-      "url": "{{ENDPOINT_BASE}}/api/activity/save",
+      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/save",
       "verb": "POST",
       "useJwt": false
     },
     "publish": {
-      "url": "{{ENDPOINT_BASE}}/api/activity/publish",
+      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/publish",
       "verb": "POST",
       "useJwt": false
     },
     "validate": {
-      "url": "{{ENDPOINT_BASE}}/api/activity/validate",
+      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/validate",
       "verb": "POST",
       "useJwt": false
     },
     "stop": {
-      "url": "{{ENDPOINT_BASE}}/api/activity/stop",
+      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/stop",
       "verb": "POST",
       "useJwt": false
     }
