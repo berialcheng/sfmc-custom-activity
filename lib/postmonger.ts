@@ -43,14 +43,41 @@ export class JourneyBuilderConnection {
 
     // Listen for initActivity - this is sent by Journey Builder after we trigger 'ready'
     this.connection.on('initActivity', (data: unknown) => {
-      console.log('initActivity received:', data);
+      console.log('initActivity received:', JSON.stringify(data, null, 2));
 
-      const initData = data as JourneyInteraction & {
-        activity?: ActivityInstance;
-      };
+      // The data structure can vary - handle different cases
+      const initData = data as Record<string, unknown>;
 
-      this.interaction = initData;
-      this.activity = initData.activity || null;
+      // Store the full payload
+      this.interaction = initData as unknown as JourneyInteraction;
+
+      // Try to find activity in different possible locations
+      if (initData.activity) {
+        this.activity = initData.activity as ActivityInstance;
+      } else if (initData.arguments) {
+        // The data itself might be the activity
+        this.activity = initData as unknown as ActivityInstance;
+      } else {
+        // Create a default activity structure
+        console.log('Creating default activity structure');
+        this.activity = {
+          id: (initData.id as string) || 'custom-activity',
+          key: (initData.key as string) || 'custom-activity-key',
+          name: (initData.name as string) || 'Custom Activity',
+          type: 'REST',
+          arguments: {
+            execute: {
+              inArguments: [],
+              outArguments: [],
+            },
+          },
+          metaData: {
+            isConfigured: false,
+          },
+        };
+      }
+
+      console.log('Activity set to:', JSON.stringify(this.activity, null, 2));
 
       // Restore saved configuration from activity
       if (this.activity?.arguments?.execute?.inArguments) {
@@ -67,16 +94,31 @@ export class JourneyBuilderConnection {
       callbacks.onInitActivity?.(data);
     });
 
-    // Listen for requestedInteraction
+    // Listen for requestedInteraction - contains the full journey and activity data
     this.connection.on('requestedInteraction', (data: unknown) => {
-      console.log('requestedInteraction received:', data);
-      this.interaction = data as JourneyInteraction;
+      console.log('requestedInteraction received:', JSON.stringify(data, null, 2));
+
+      const interactionData = data as Record<string, unknown>;
+      this.interaction = interactionData as unknown as JourneyInteraction;
+
+      // Try to extract activity from interaction
+      if (interactionData.activities && Array.isArray(interactionData.activities)) {
+        // Find our activity in the activities array
+        const activities = interactionData.activities as ActivityInstance[];
+        if (activities.length > 0) {
+          // Usually the current activity is the one being configured
+          this.activity = activities[0];
+          console.log('Activity from requestedInteraction:', this.activity);
+        }
+      }
+
       callbacks.onRequestedInteraction?.(data);
     });
 
     // User clicked "Next" or "Done"
     this.connection.on('clickedNext', () => {
       console.log('clickedNext received');
+      this.save(); // Auto-save when clicking next/done
       callbacks.onClickedNext?.();
     });
 
@@ -90,6 +132,9 @@ export class JourneyBuilderConnection {
     // Journey Builder will then send 'initActivity'
     console.log('Triggering ready event...');
     this.connection.trigger('ready');
+
+    // Also request the current interaction data
+    this.connection.trigger('requestInteraction');
   }
 
   /**
@@ -110,9 +155,24 @@ export class JourneyBuilderConnection {
    * Save Activity configuration
    */
   save() {
+    // If no activity exists, create one
     if (!this.activity) {
-      console.error('No activity to save');
-      return;
+      console.log('Creating new activity for save');
+      this.activity = {
+        id: 'custom-activity',
+        key: 'custom-activity-key',
+        name: 'Custom Activity',
+        type: 'REST',
+        arguments: {
+          execute: {
+            inArguments: [],
+            outArguments: [],
+          },
+        },
+        metaData: {
+          isConfigured: false,
+        },
+      };
     }
 
     // Build inArguments
@@ -136,7 +196,7 @@ export class JourneyBuilderConnection {
       isConfigured: true,
     };
 
-    console.log('Saving activity:', this.activity);
+    console.log('Saving activity:', JSON.stringify(this.activity, null, 2));
 
     // Send updated activity to Journey Builder
     this.connection.trigger('updateActivity', this.activity);
