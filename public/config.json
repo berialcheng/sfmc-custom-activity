@@ -1,7 +1,7 @@
 {
   "workflowApiVersion": "1.1",
   "metaData": {
-    "icon": "https://sfmc-custom-activity-one.vercel.app/images/icon.svg",
+    "icon": "https://sfmc-custom-activity.onionlancer.com/images/icon.svg",
     "category": "custom"
   },
   "type": "REST",
@@ -40,27 +40,27 @@
       "retryCount": 3,
       "retryDelay": 10000,
       "concurrentRequests": 5,
-      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/execute"
+      "url": "https://sfmc-custom-activity.onionlancer.com/api/activity/execute"
     }
   },
   "configurationArguments": {
     "save": {
-      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/save",
+      "url": "https://sfmc-custom-activity.onionlancer.com/api/activity/save",
       "verb": "POST",
       "useJwt": false
     },
     "publish": {
-      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/publish",
+      "url": "https://sfmc-custom-activity.onionlancer.com/api/activity/publish",
       "verb": "POST",
       "useJwt": false
     },
     "validate": {
-      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/validate",
+      "url": "https://sfmc-custom-activity.onionlancer.com/api/activity/validate",
       "verb": "POST",
       "useJwt": false
     },
     "stop": {
-      "url": "https://sfmc-custom-activity-one.vercel.app/api/activity/stop",
+      "url": "https://sfmc-custom-activity.onionlancer.com/api/activity/stop",
       "verb": "POST",
       "useJwt": false
     }
