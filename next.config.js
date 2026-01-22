@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  skipTrailingSlashRedirect: true,
+
   // Handle /index.html requests (SFMC compatibility)
   async rewrites() {
     return [
