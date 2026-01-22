@@ -127,6 +127,14 @@ export class JourneyBuilderConnection {
       callbacks.onClickedNext?.();
     });
 
+    // Some Journey Builder surfaces emit clickedDone instead of clickedNext
+    this.connection.on('clickedDone', () => {
+      console.log('clickedDone received');
+      this.save();
+      this.requestInspectorClose();
+      callbacks.onClickedNext?.();
+    });
+
     // User clicked "Back"
     this.connection.on('clickedBack', () => {
       console.log('clickedBack received');
@@ -160,8 +168,10 @@ export class JourneyBuilderConnection {
    * Save Activity configuration
    */
   save() {
-    // IMPORTANT: Create a clean activity object with ONLY the fields we need
-    // Do NOT copy from this.activity as it may contain corrupted data from SFMC
+    if (!this.activity) {
+      console.log('Cannot save: activity not initialized yet');
+      return;
+    }
 
     const inArguments = [
       { contactKey: '{{Contact.Key}}' },
@@ -169,29 +179,36 @@ export class JourneyBuilderConnection {
       ...Object.entries(this.payload).map(([key, value]) => ({ [key]: value })),
     ];
 
-    // Build a clean activity object - only include essential fields
-    const cleanActivity = {
-      // Preserve identity fields from existing activity if available
-      id: this.activity?.id || 'foundations-support-activity',
-      key: this.activity?.key || 'foundations-support-activity-key',
-      name: this.activity?.name || "Foundation's Support Activity",
-      type: 'REST',
-      arguments: {
-        execute: {
-          inArguments,
-          outArguments: [{ result: '' }],
-        },
-      },
-      metaData: {
-        isConfigured: true,
-      },
-      // Do NOT include: outcomes, configurationArguments, schema, editable, etc.
-    };
+    // Follow SFMC examples: modify the activity object received from initActivity
+    // and send back the full object via updateActivity.
+    const updatedActivity: ActivityInstance = JSON.parse(JSON.stringify(this.activity));
 
-    console.log('Saving clean activity:', JSON.stringify(cleanActivity, null, 2));
+    updatedActivity.arguments = updatedActivity.arguments ?? {};
+    const args = updatedActivity.arguments;
+    args.execute = args.execute ?? {};
+    const exec = args.execute;
 
-    // Send clean activity to Journey Builder
-    this.connection.trigger('updateActivity', cleanActivity);
+    exec.inArguments = inArguments;
+    exec.outArguments = exec.outArguments && exec.outArguments.length > 0 ? exec.outArguments : [{ result: '' }];
+
+    updatedActivity.metaData = updatedActivity.metaData ?? { isConfigured: false };
+    updatedActivity.metaData.isConfigured = true;
+
+    console.log('Saving updated activity:', JSON.stringify(updatedActivity, null, 2));
+
+    this.connection.trigger('updateActivity', updatedActivity);
+    this.setActivityDirtyState(false);
+
+    // Keep the local copy in sync
+    this.activity = updatedActivity;
+  }
+
+  setActivityDirtyState(isDirty: boolean) {
+    this.connection.trigger('setActivityDirtyState', isDirty);
+  }
+
+  requestInspectorClose() {
+    this.connection.trigger('requestInspectorClose');
   }
 
   /**

@@ -61,10 +61,7 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
       },
 
       onClickedNext: () => {
-        // Save configuration when user clicks Done/Next
-        const conn = getConnection();
-        conn.save();
-        console.log('Configuration saved');
+        console.log('Done/Next clicked');
       },
     });
   }, []);
@@ -79,6 +76,7 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
         if (!isDevMode) {
           const connection = getConnection();
           connection.updatePayload({ [field]: value });
+          connection.setActivityDirtyState(true);
         }
 
         return newConfig;
@@ -92,6 +90,7 @@ export default function ActivityConfig({ onSave }: ActivityConfigProps) {
     if (!isDevMode) {
       const connection = getConnection();
       connection.save();
+      connection.requestInspectorClose();
     } else {
       console.log('Development mode - Config saved:', config);
       alert('Configuration saved (Development Mode)\n\n' + JSON.stringify(config, null, 2));
