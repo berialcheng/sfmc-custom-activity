@@ -1,50 +1,50 @@
 # SFMC Custom Activity
 
-Salesforce Marketing Cloud Engagement Custom Activity 模板，使用 Next.js 构建，可部署在 Vercel 上。
+A Salesforce Marketing Cloud Engagement Custom Activity template built with Next.js, deployable on Vercel.
 
-## 项目结构
+## Project Structure
 
 ```
 custom-activity/
 ├── app/
-│   ├── api/activity/           # API 端点
-│   │   ├── execute/            # Journey 执行时调用
-│   │   ├── save/               # 保存配置
-│   │   ├── publish/            # Journey 发布时调用
-│   │   ├── validate/           # 验证配置
-│   │   └── stop/               # Journey 停止时调用
-│   ├── page.tsx                # 配置 UI 主页面
+│   ├── api/activity/           # API endpoints
+│   │   ├── execute/            # Called when Journey runs
+│   │   ├── save/               # Save configuration
+│   │   ├── publish/            # Called when Journey is published
+│   │   ├── validate/           # Validate configuration
+│   │   └── stop/               # Called when Journey stops
+│   ├── page.tsx                # Configuration UI main page
 │   ├── layout.tsx
 │   └── globals.css
 ├── public/
-│   └── config.json             # Activity 定义配置
+│   └── config.json             # Activity definition config
 ├── lib/
-│   ├── postmonger.ts           # Postmonger SDK 封装
-│   └── types.ts                # TypeScript 类型定义
+│   ├── postmonger.ts           # Postmonger SDK wrapper
+│   └── types.ts                # TypeScript type definitions
 ├── components/
-│   └── ActivityConfig.tsx      # 配置表单组件
-└── vercel.json                 # Vercel 部署配置
+│   └── ActivityConfig.tsx      # Configuration form component
+└── vercel.json                 # Vercel deployment config
 ```
 
-## 快速开始
+## Quick Start
 
-### 1. 安装依赖
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. 本地开发
+### 2. Local Development
 
 ```bash
 npm run dev
 ```
 
-访问 http://localhost:3000 查看配置界面。
+Visit http://localhost:3000 to view the configuration interface.
 
-### 3. 配置 config.json
+### 3. Configure config.json
 
-编辑 `public/config.json`，将 `{{ENDPOINT_BASE}}` 替换为您的实际部署 URL：
+Edit `public/config.json` and replace `{{ENDPOINT_BASE}}` with your actual deployment URL:
 
 ```json
 {
@@ -56,40 +56,40 @@ npm run dev
 }
 ```
 
-### 4. 部署到 Vercel
+### 4. Deploy to Vercel
 
 ```bash
-# 安装 Vercel CLI
+# Install Vercel CLI
 npm i -g vercel
 
-# 部署
+# Deploy
 vercel
 ```
 
-## 在 SFMC 中安装
+## Installing in SFMC
 
-### 方法 1: 使用 Package Manager
+### Method 1: Using Package Manager
 
-1. 登录 Marketing Cloud
-2. 进入 **Setup** > **Apps** > **Installed Packages**
-3. 点击 **New** 创建新 Package
-4. 添加 **Journey Builder Activity** 组件
-5. 填写配置：
+1. Log in to Marketing Cloud
+2. Go to **Setup** > **Apps** > **Installed Packages**
+3. Click **New** to create a new Package
+4. Add a **Journey Builder Activity** component
+5. Fill in the configuration:
    - **Endpoint URL**: `https://your-app.vercel.app`
    - **Config URL**: `https://your-app.vercel.app/config.json`
 
-### 方法 2: 直接配置 config.json
+### Method 2: Direct config.json Configuration
 
-确保 `public/config.json` 中的所有 URL 都指向正确的端点。
+Ensure all URLs in `public/config.json` point to the correct endpoints.
 
-## 自定义开发
+## Custom Development
 
-### 修改执行逻辑
+### Modifying Execution Logic
 
-编辑 `app/api/activity/execute/route.ts` 添加您的业务逻辑：
+Edit `app/api/activity/execute/route.ts` to add your business logic:
 
 ```typescript
-// 示例：调用外部 API
+// Example: Call an external API
 const response = await fetch('https://your-api.com/endpoint', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -101,15 +101,15 @@ const response = await fetch('https://your-api.com/endpoint', {
 });
 ```
 
-### 添加新的配置字段
+### Adding New Configuration Fields
 
-1. 更新 `lib/types.ts` 中的 `CustomActivityState` 接口
-2. 在 `components/ActivityConfig.tsx` 中添加表单字段
-3. 更新 `public/config.json` 中的 `inArguments` 和 `schema`
+1. Update the `CustomActivityState` interface in `lib/types.ts`
+2. Add form fields in `components/ActivityConfig.tsx`
+3. Update `inArguments` and `schema` in `public/config.json`
 
-### 添加数据绑定
+### Adding Data Bindings
 
-在 `config.json` 的 `inArguments` 中使用 SFMC 表达式：
+Use SFMC expressions in the `inArguments` section of `config.json`:
 
 ```json
 {
@@ -121,44 +121,44 @@ const response = await fetch('https://your-api.com/endpoint', {
 }
 ```
 
-## 测试
+## Testing
 
-### 本地测试 API
+### Local API Testing
 
 ```bash
-# 测试 execute 端点
+# Test the execute endpoint
 curl -X POST http://localhost:3000/api/activity/execute \
   -H "Content-Type: application/json" \
   -d '{"inArguments": [{"contactKey": "test123"}]}'
 ```
 
-### 使用 ngrok 进行 SFMC 集成测试
+### SFMC Integration Testing with ngrok
 
 ```bash
-# 安装 ngrok
+# Install ngrok
 npm i -g ngrok
 
-# 暴露本地服务
+# Expose local server
 ngrok http 3000
 ```
 
-将 ngrok URL 用于 SFMC 测试。
+Use the ngrok URL for SFMC testing.
 
-## 环境变量
+## Environment Variables
 
-| 变量 | 说明 |
-|------|------|
-| `SFMC_JWT_SECRET` | JWT 密钥（用于验证 SFMC 请求，可选） |
-| `NEXT_PUBLIC_APP_URL` | 应用部署 URL |
+| Variable | Description |
+|----------|-------------|
+| `SFMC_JWT_SECRET` | JWT secret (for validating SFMC requests, optional) |
+| `NEXT_PUBLIC_APP_URL` | Application deployment URL |
 
-## 技术栈
+## Tech Stack
 
-- **Next.js 14** - React 框架
-- **TypeScript** - 类型安全
-- **Tailwind CSS** - 样式
-- **Postmonger** - Journey Builder 通信
+- **Next.js 14** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Postmonger** - Journey Builder communication
 
-## 参考文档
+## Reference Documentation
 
 - [SFMC Custom Activities](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/creating-activities.html)
 - [Journey Builder SDK](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/jb-sdk.html)
